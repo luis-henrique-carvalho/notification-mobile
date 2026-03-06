@@ -7,7 +7,7 @@ const mockNotification: Notification = {
   id: "notif-1",
   title: "System Update",
   body: "The system will undergo maintenance.",
-  priority: "info",
+  priority: "low",
   createdAt: "2026-01-01T00:00:00Z",
 };
 
@@ -15,7 +15,7 @@ const mockCriticalNotification: Notification = {
   id: "notif-2",
   title: "Security Alert",
   body: "Unauthorized access detected.",
-  priority: "critical",
+  priority: "high",
   createdAt: "2026-01-01T01:00:00Z",
 };
 

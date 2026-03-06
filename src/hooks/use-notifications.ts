@@ -1,11 +1,16 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import client from "../api/client";
 
 export interface NotificationItem {
   id: string;
   title: string;
   body: string;
-  priority: "info" | "warning" | "critical";
+  priority: "low" | "medium" | "high";
   isRead?: boolean;
   readAt?: string | null;
   createdAt: string;
@@ -56,7 +61,10 @@ export const useUnreadCount = () => {
   return useQuery({
     queryKey: ["notifications", "unread-count"],
     queryFn: async () => {
-      const { data, error } = await client.GET("/notifications/unread-count", {});
+      const { data, error } = await client.GET(
+        "/notifications/unread-count",
+        {},
+      );
 
       if (error) {
         throw new Error("Failed to fetch unread count");
@@ -86,7 +94,9 @@ export const useMarkAsRead = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications", "unread-count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", "unread-count"],
+      });
     },
   });
 };

@@ -4,7 +4,7 @@ export interface Notification {
   id: string;
   title: string;
   body: string;
-  priority: "info" | "warning" | "critical";
+  priority: "low" | "medium" | "high";
   createdAt: string;
 }
 

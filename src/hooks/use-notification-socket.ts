@@ -32,7 +32,7 @@ export const useNotificationSocket = () => {
         queryKey: ["notifications", "unread-count"],
       });
 
-      if (notification?.priority === "critical") {
+      if (notification?.priority === "high") {
         enqueueModal(notification);
       }
     });

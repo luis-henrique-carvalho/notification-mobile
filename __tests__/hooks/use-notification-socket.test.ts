@@ -82,7 +82,7 @@ describe("useNotificationSocket", () => {
   it("handles critical notifications by enqueuing modal", () => {
     renderHook(() => useNotificationSocket());
 
-    const criticalNotif = { id: "2", title: "Critical", priority: "critical" };
+    const criticalNotif = { id: "2", title: "Critical", priority: "high" };
 
     act(() => {
       mockOnNotification(criticalNotif);

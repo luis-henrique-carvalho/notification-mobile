@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export type PriorityLevel = "info" | "warning" | "critical";
+export type PriorityLevel = "low" | "medium" | "high";
 
 interface PriorityBadgeProps {
   priority: PriorityLevel;
@@ -10,25 +10,25 @@ interface PriorityBadgeProps {
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
   const getBadgeStyle = () => {
     switch (priority) {
-      case "critical":
-        return styles.critical;
-      case "warning":
-        return styles.warning;
-      case "info":
+      case "high":
+        return styles.high;
+      case "medium":
+        return styles.medium;
+      case "low":
       default:
-        return styles.info;
+        return styles.low;
     }
   };
 
   const getLabel = () => {
     switch (priority) {
-      case "critical":
-        return "Critical";
-      case "warning":
-        return "Warning";
-      case "info":
+      case "high":
+        return "High";
+      case "medium":
+        return "Medium";
+      case "low":
       default:
-        return "Info";
+        return "Low";
     }
   };
 
@@ -51,13 +51,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
   },
-  info: {
+  low: {
     backgroundColor: "#3b82f6", // blue-500
   },
-  warning: {
+  medium: {
     backgroundColor: "#f59e0b", // amber-500
   },
-  critical: {
+  high: {
     backgroundColor: "#ef4444", // red-500
   },
 });
