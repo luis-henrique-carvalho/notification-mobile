@@ -45,7 +45,7 @@ describe("use-auth", () => {
   describe("performLogin", () => {
     it("should call POST /auth/login with email and password", async () => {
       mockedPOST.mockResolvedValue({
-        data: { access_token: mockToken, user: mockUser },
+        data: { accessToken: mockToken, user: mockUser },
         error: undefined,
       });
 
@@ -58,7 +58,7 @@ describe("use-auth", () => {
 
     it("should store token and user on successful login", async () => {
       mockedPOST.mockResolvedValue({
-        data: { access_token: mockToken, user: mockUser },
+        data: { accessToken: mockToken, user: mockUser },
         error: undefined,
       });
 
@@ -95,7 +95,7 @@ describe("use-auth", () => {
   describe("performRegister", () => {
     it("should call POST /auth/register with name, email and password", async () => {
       mockedPOST.mockResolvedValue({
-        data: { access_token: mockToken, user: mockUser },
+        data: { accessToken: mockToken, user: mockUser },
         error: undefined,
       });
 
@@ -112,7 +112,7 @@ describe("use-auth", () => {
 
     it("should store token and user on successful registration", async () => {
       mockedPOST.mockResolvedValue({
-        data: { access_token: mockToken, user: mockUser },
+        data: { accessToken: mockToken, user: mockUser },
         error: undefined,
       });
 

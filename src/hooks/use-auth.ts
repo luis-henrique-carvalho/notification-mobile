@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useCallback } from "react";
 
 interface AuthResponse {
-  access_token: string;
+  accessToken: string;
   user: NonNullable<AuthState["user"]>;
 }
 
@@ -17,14 +17,16 @@ export async function performLogin(email: string, password: string) {
     body: { email, password },
   });
 
+
+
   if (error) {
     throw new Error(
-      (error as Record<string, unknown>).message as string ?? "Login failed"
+      ((error as Record<string, unknown>).message as string) ?? "Login failed",
     );
   }
 
   const response = data as unknown as AuthResponse;
-  await useAuthStore.getState().login(response.access_token, response.user);
+  await useAuthStore.getState().login(response.accessToken, response.user);
 }
 
 /**
@@ -34,7 +36,7 @@ export async function performLogin(email: string, password: string) {
 export async function performRegister(
   name: string,
   email: string,
-  password: string
+  password: string,
 ) {
   const { data, error } = await client.POST("/auth/register", {
     body: { name, email, password },
@@ -42,13 +44,13 @@ export async function performRegister(
 
   if (error) {
     throw new Error(
-      (error as Record<string, unknown>).message as string ??
-        "Registration failed"
+      ((error as Record<string, unknown>).message as string) ??
+        "Registration failed",
     );
   }
 
   const response = data as unknown as AuthResponse;
-  await useAuthStore.getState().login(response.access_token, response.user);
+  await useAuthStore.getState().login(response.accessToken, response.user);
 }
 
 /**
@@ -62,7 +64,7 @@ export function useLogin() {
       await performLogin(email, password);
       router.replace("/(tabs)");
     },
-    [router]
+    [router],
   );
 
   return { loginMutation };
@@ -79,7 +81,7 @@ export function useRegister() {
       await performRegister(name, email, password);
       router.replace("/(tabs)");
     },
-    [router]
+    [router],
   );
 
   return { registerMutation };
