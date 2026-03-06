@@ -1,17 +1,19 @@
-import { useEffect } from 'react';
-import { AppState, type AppStateStatus } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
-import { useQueryClient } from '@tanstack/react-query';
-import { socketManager } from '../services/socket-manager';
-import { useAuthStore } from '../stores/auth-store';
-import { useNotificationStore } from '../stores/notification-store';
-import type { NotificationItem } from './use-notifications';
+import { useEffect } from "react";
+import { AppState, type AppStateStatus } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
+import { useQueryClient } from "@tanstack/react-query";
+import { socketManager } from "../services/socket-manager";
+import { useAuthStore } from "../stores/auth-store";
+import { useNotificationStore } from "../stores/notification-store";
+import type { NotificationItem } from "./use-notifications";
 
 export const useNotificationSocket = () => {
   const queryClient = useQueryClient();
-  const token = useAuthStore(state => state.token);
-  const enqueueModal = useNotificationStore(state => state.enqueueModal);
-  const incrementUnread = useNotificationStore(state => state.incrementUnread);
+  const token = useAuthStore((state) => state.token);
+  const enqueueModal = useNotificationStore((state) => state.enqueueModal);
+  const incrementUnread = useNotificationStore(
+    (state) => state.incrementUnread,
+  );
 
   // Connection and event listeners
   useEffect(() => {
@@ -26,7 +28,9 @@ export const useNotificationSocket = () => {
       incrementUnread();
 
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications", "unread-count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", "unread-count"],
+      });
 
       if (notification?.priority === "critical") {
         enqueueModal(notification);
@@ -34,6 +38,7 @@ export const useNotificationSocket = () => {
     });
 
     return () => {
+      socketManager.offNotification();
       socketManager.disconnect();
     };
   }, [token, queryClient, enqueueModal, incrementUnread]);
@@ -52,18 +57,25 @@ export const useNotificationSocket = () => {
         if (token && !socketManager.isConnected()) {
           socketManager.connect(token);
           queryClient.invalidateQueries({ queryKey: ["notifications"] });
-          queryClient.invalidateQueries({ queryKey: ["notifications", "unread-count"] });
+          queryClient.invalidateQueries({
+            queryKey: ["notifications", "unread-count"],
+          });
         }
       }
     };
 
-    const appStateSubscription = AppState.addEventListener("change", handleAppStateChange);
+    const appStateSubscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
 
-    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+    const unsubscribeNetInfo = NetInfo.addEventListener((state) => {
       if (state.isConnected && token && !socketManager.isConnected()) {
         socketManager.connect(token);
         queryClient.invalidateQueries({ queryKey: ["notifications"] });
-        queryClient.invalidateQueries({ queryKey: ["notifications", "unread-count"] });
+        queryClient.invalidateQueries({
+          queryKey: ["notifications", "unread-count"],
+        });
       }
     });
 

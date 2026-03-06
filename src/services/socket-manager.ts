@@ -1,10 +1,11 @@
-import { io, Socket } from 'socket.io-client';
+import { io, Socket } from "socket.io-client";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
 
 class SocketManager {
   private socket: Socket | null = null;
   private static instance: SocketManager;
+  private notificationCallback: ((data: any) => void) | null = null;
 
   private constructor() {}
 
@@ -22,21 +23,26 @@ class SocketManager {
 
     this.socket = io(BASE_URL, {
       auth: { token },
-      transports: ['websocket'],
+      transports: ["websocket"],
       reconnection: true,
     });
 
-    this.socket.on('connect', () => {
-      console.log('[SocketManager] Connected to WebSocket');
+    this.socket.on("connect", () => {
+      console.log("[SocketManager] Connected to WebSocket");
     });
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on("disconnect", (reason) => {
       console.log(`[SocketManager] Disconnected: ${reason}`);
     });
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on("connect_error", (error) => {
       console.log(`[SocketManager] Connection Error: ${error.message}`);
     });
+
+    // Re-register stored callback on the new socket
+    if (this.notificationCallback) {
+      this.socket.on("notification:new", this.notificationCallback);
+    }
   }
 
   public disconnect() {
@@ -51,13 +57,22 @@ class SocketManager {
   }
 
   public onNotification(callback: (data: any) => void) {
+    this.notificationCallback = callback;
+
     if (!this.socket) {
-      console.warn('[SocketManager] Cannot listen to notifications without a socket');
       return;
     }
 
-    this.socket.off('notification:new');
-    this.socket.on('notification:new', callback);
+    this.socket.off("notification:new");
+    this.socket.on("notification:new", callback);
+  }
+
+  public offNotification() {
+    this.notificationCallback = null;
+
+    if (this.socket) {
+      this.socket.off("notification:new");
+    }
   }
 }
 

@@ -11,6 +11,7 @@ jest.mock("../../src/services/socket-manager", () => ({
     disconnect: jest.fn(),
     isConnected: jest.fn(),
     onNotification: jest.fn(),
+    offNotification: jest.fn(),
   },
 }));
 
@@ -30,7 +31,11 @@ describe("useNotificationSocket", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useAuthStore.setState({ token: "fake-jwt-token", user: null, isAuthenticated: true });
+    useAuthStore.setState({
+      token: "fake-jwt-token",
+      user: null,
+      isAuthenticated: true,
+    });
     useNotificationStore.setState({ unreadCount: 0, modalQueue: [] });
 
     mockInvalidateQueries = jest.fn();
@@ -38,9 +43,11 @@ describe("useNotificationSocket", () => {
       invalidateQueries: mockInvalidateQueries,
     });
 
-    (socketManager.onNotification as jest.Mock).mockImplementation((callback) => {
-      mockOnNotification = callback;
-    });
+    (socketManager.onNotification as jest.Mock).mockImplementation(
+      (callback) => {
+        mockOnNotification = callback;
+      },
+    );
   });
 
   it("connects with JWT when token is present", () => {
@@ -63,8 +70,12 @@ describe("useNotificationSocket", () => {
     });
 
     expect(useNotificationStore.getState().unreadCount).toBe(1);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ["notifications"] });
-    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ["notifications", "unread-count"] });
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["notifications"],
+    });
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["notifications", "unread-count"],
+    });
     expect(useNotificationStore.getState().modalQueue).toHaveLength(0);
   });
 
@@ -78,6 +89,8 @@ describe("useNotificationSocket", () => {
     });
 
     expect(useNotificationStore.getState().modalQueue).toHaveLength(1);
-    expect(useNotificationStore.getState().modalQueue[0]).toEqual(criticalNotif);
+    expect(useNotificationStore.getState().modalQueue[0]).toEqual(
+      criticalNotif,
+    );
   });
 });
