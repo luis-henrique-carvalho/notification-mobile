@@ -6,6 +6,9 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+import { View } from "react-native";
+import { UnreadBadge } from "@/src/components/unread-badge";
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
@@ -19,8 +22,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Notifications',
+          tabBarIcon: ({ color }) => (
+            <View>
+              <IconSymbol size={28} name="bell.fill" color={color} />
+              <UnreadBadge />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen

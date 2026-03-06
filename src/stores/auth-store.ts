@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { getToken, setToken, removeToken } from "@/src/utils/secure-storage";
+import { socketManager } from "@/src/services/socket-manager";
 
 export interface AuthState {
   token: string | null;
@@ -33,6 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     await removeToken();
+    socketManager.disconnect();
     set({ token: null, user: null, isAuthenticated: false });
   },
 
